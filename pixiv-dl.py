@@ -74,7 +74,7 @@ api_result = requests.get(url, headers={
 try:
 	api_response = api_result.json()
 except:
-	print('Didn\'t get a JSON result. Maybe Cloudflare blocked the request?')
+	print('Didn\'t get a JSON result. Maybe Cloudflare blocked the request?\nYou can try specifying the same user agent your browser sends.')
 	exit(1)
 
 if api_response.get('error'):
