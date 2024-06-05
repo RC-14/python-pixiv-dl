@@ -5,12 +5,15 @@ from sys import argv
 import requests
 
 def print_help():
-	print(f'Usage: {argv[0][argv[0].rindex('/') + 1:]} ILLUSTRATION_ID [--out-dir OUTPUT_DIRECTORY]')
+	print(f'Usage: {argv[0][argv[0].rindex('/') + 1:]} ILLUSTRATION_ID [--out-dir OUTPUT_DIRECTORY] [--cookie COOKIE] [--user-agent USER_AGENT]')
 	print('\nILLUSTRATION_ID     Numeric id of the illustration to download. (https://www.pixiv.net/artworks/<Illustration ID>)')
 	print('OUTPUT_DIRECTORY    The directory to write the downloaded images into.')
+	print('COOKIE              A valid cookie for pixiv in case you want to download age restricted illustrations.')
+	print('USER_AGENT          A User Agent string. Probably only useful with COOKIE set.')
 	print('\nProviding -- for any option will make it be read from stdin.')
 	print('Specifying an option multiple times will overwrite the preceding occurrences.')
 	print('Not specifying an ILLUSTRATION_ID has the same effect as --.')
+	print('The default value for USER_AGENT is: Mozilla/5.0 Gecko/20100101 Firefox/127.0')
 	print('\nSpecifying --help will print this help message and exit.')
 	exit(1)
 
@@ -19,6 +22,8 @@ if '--help' in argv:
 
 illust_id = '--'
 out_dir = './'
+cookie = ''
+user_agent = 'Mozilla/5.0 Gecko/20100101 Firefox/127.0'
 
 for i in range(1, len(argv)):
 	if len(argv[i]) > 2 and argv[i].startswith('--'):
@@ -28,6 +33,13 @@ for i in range(1, len(argv)):
 		out_dir = argv[i]
 		continue
 
+	if argv[i - 1] == '--cookie':
+		cookie = argv[i]
+		continue
+
+	if argv[i - 1] == '--user-agent':
+		user_agent = argv[i]
+
 	illust_id = argv[i]
 
 if illust_id == '--':
@@ -35,6 +47,12 @@ if illust_id == '--':
 
 if out_dir == '--':
 	out_dir = input('Output directory: ')
+
+if cookie == '--':
+	cookie = input('Cookie: ')
+
+if user_agent == '--':
+	user_agent = input('User Agent: ')
 
 if illust_id == None or not illust_id.isnumeric():
 	print('Invalid Illustration ID.\n')
@@ -48,7 +66,10 @@ if not isdir(out_dir):
 
 url = f'https://www.pixiv.net/ajax/illust/{illust_id}?lang=en'
 
-api_result = requests.get(url)
+api_result = requests.get(url, headers={
+	'Cookie': cookie,
+	'User-Agent': user_agent
+})
 
 try:
 	api_response = api_result.json()
