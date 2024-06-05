@@ -1,9 +1,31 @@
 #!/usr/bin/env python3
 
-from genericpath import isfile
+from sys import argv
 import requests
 
-illust_id = input('Illustration ID (/artworks/<illustration ID>): ')
+def print_help():
+	print(f'Usage: {argv[0][argv[0].rindex('/') + 1:]} ILLUSTRATION_ID')
+	print('\nILLUSTRATION_ID     Numeric id of the illustration to download. (https://www.pixiv.net/artworks/<Illustration ID>)')
+	print('\nProviding -- for any option will make it be read from stdin.')
+	print('Specifying an option multiple times will overwrite the preceding occurrences.')
+	print('Not specifying an ILLUSTRATION_ID has the same effect as --.')
+	print('\nSpecifying --help will print this help message and exit.')
+	exit(1)
+
+if '--help' in argv:
+	print_help()
+
+illust_id = '--'
+
+for i in range(1, len(argv)):
+	illust_id = argv[i]
+
+if illust_id == '--':
+	illust_id = input('Illustration ID (/artworks/<Illustration ID>): ')
+
+if illust_id == None or not illust_id.isnumeric():
+	print('Invalid Illustration ID.\n')
+	print_help()
 
 url = f'https://www.pixiv.net/ajax/illust/{illust_id}?lang=en'
 
