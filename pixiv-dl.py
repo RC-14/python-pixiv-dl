@@ -3,7 +3,7 @@
 from genericpath import isfile
 import requests
 
-illust_id = 34512986
+illust_id = input('Illustration ID (/artworks/<illustration ID>): ')
 
 url = f'https://www.pixiv.net/ajax/illust/{illust_id}?lang=en'
 
