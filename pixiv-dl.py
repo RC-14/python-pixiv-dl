@@ -7,10 +7,10 @@ illust_id = 34512986
 
 url = f'https://www.pixiv.net/ajax/illust/{illust_id}?lang=en'
 
-result = requests.get(url)
+api_result = requests.get(url)
 
 try:
-	api_response = result.json()
+	api_response = api_result.json()
 except:
 	print('Didn\'t get a JSON result. Maybe Cloudflare blocked the request?')
 	exit(1)
